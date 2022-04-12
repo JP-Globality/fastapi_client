@@ -46,6 +46,8 @@ main() {
   WORK_DIR=$(mktemp -d "$TEMP_DIR/tmp.XXXXXXXXX")
   echo "Storing intermediate outputs in ${WORK_DIR}; it will be removed if generation is successful"
   setup_openapi_generation "$WORK_DIR"
+  echo ${PROJECT_ROOT}
+  echo $INPUT
   "${PROJECT_ROOT}/scripts/util/openapi-generate.sh" -p "$PACKAGE_NAME" -w "$WORK_DIR" -i "$INPUT" ${WITH_META:+ --with-meta} -- "$@"
 
   cd "${PROJECT_ROOT}"
@@ -56,6 +58,7 @@ main() {
   fill_import_name_templates "$WORK_DIR"
 
   ./scripts/util/postprocess.sh -p "${PACKAGE_NAME}" -w "$WORK_DIR"
+  echo "hi"
   clean_openapi_generator_output "$WORK_DIR"
   move_generated_output "$WORK_DIR"
   echo "Generation succeeded 🚀"
@@ -153,6 +156,8 @@ add_extra_python_template() {
 }
 
 fill_import_name_template() {
+  echo "${IMPORT_NAME}"
+  echo "$1"
   python_filename="$1"
   sed -i.bak "s/@IMPORT_NAME@/${IMPORT_NAME}/" "$python_filename"
   rm "$python_filename".bak

@@ -93,7 +93,7 @@ generate_using_node_cli() {
 
   openapi-generator-cli generate \
     -g python \
-    -o ./generator-output \
+    -o $WORK_DIR \
     --package-name="${PACKAGE_NAME}" \
     --additional-properties=generateSourceCodeOnly="${SOURCE_CODE_ONLY}" \
     -t ./openapi-python-templates \
