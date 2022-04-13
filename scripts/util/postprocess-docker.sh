@@ -1,7 +1,6 @@
 #! /usr/bin/env bash
 
 set -e
-cd /generator-output
 
 CMDNAME=${0##*/}
 
@@ -16,6 +15,7 @@ Usage:
 
 Options:
   -p, --package-name       The name to use for the generated package
+  -w, --work-dir           The working directory used for generator output
   -h, --help               Show this message
 USAGE
   exit "$exitcode"
@@ -23,10 +23,15 @@ USAGE
 
 main() {
   validate_inputs
+
+  pushd $WORK_DIR
+
   merge_generated_models
   delete_unused
   fix_any_of
   apply_formatters
+
+  popd
 }
 
 validate_inputs() {
@@ -40,8 +45,8 @@ merge_generated_models() {
   # Need to merge the generated models into a single file to prevent circular imports
   # shellcheck disable=SC2046
   # shellcheck disable=SC2010
-  cat $(ls "${PACKAGE_NAME}"/models/*.py | grep -v __init__) >"${PACKAGE_NAME}"/models.py
-  rm -r "${PACKAGE_NAME}"/models >/dev/null 2>&1 || true
+  cat $(ls "./${PACKAGE_NAME}"/models/*.py | grep -v __init__) > "./${PACKAGE_NAME}/models.py"
+  rm -r "./${PACKAGE_NAME}"/models >/dev/null 2>&1 || true
 }
 
 delete_unused() {
@@ -61,13 +66,17 @@ fix_any_of() {
 apply_formatters() {
   autoflake --remove-all-unused-imports --recursive --remove-unused-variables --in-place "${PACKAGE_NAME}" --exclude=__init__.py
   isort --float-to-top -w 120 -m 3 --trailing-comma --force-grid-wrap 0 --combine-as -p "${PACKAGE_NAME}" "${PACKAGE_NAME}"
-  black --fast -l 120 --target-version py36 "${PACKAGE_NAME}"
+  black --fast -l 120 --target-version py37 "${PACKAGE_NAME}"
 }
 
 while [ $# -gt 0 ]; do
   case "$1" in
   -p | --package-name)
     PACKAGE_NAME=$2
+    shift 2
+    ;;
+  -w | --work-dir)
+    WORK_DIR=$2
     shift 2
     ;;
   -h | --help)

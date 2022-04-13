@@ -143,7 +143,7 @@ move_generated_output() {
   else
      mv "$WORK_DIR"/"$PACKAGE_NAME" "$OUTPUT_PATH"
   fi
-  rm -r "$WORK_DIR"
+  # rm -r "$WORK_DIR"
 }
 
 add_extra_python_template() {

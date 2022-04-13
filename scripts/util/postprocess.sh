@@ -28,9 +28,12 @@ USAGE
 
 main() {
   validate_inputs
-  docker build -t fastapi-client-generator:latest .
-  docker run --rm --user $(id -u):$(id -g) -v "$WORK_DIR":/generator-output fastapi-client-generator:latest -p "${PACKAGE_NAME}"
+  # docker build -t fastapi-client-generator:latest .
+  # docker run --rm --user $(id -u):$(id -g) -v "$WORK_DIR":/generator-output fastapi-client-generator:latest -p "${PACKAGE_NAME}"
+  "${PROJECT_ROOT}/scripts/util/postprocess-docker.sh" -p "${PACKAGE_NAME}" -w "${WORK_DIR}"
+  echo "finished postprocess-docker.sh"
   add_py_typed
+  echo "hi"
 }
 
 add_py_typed() {
