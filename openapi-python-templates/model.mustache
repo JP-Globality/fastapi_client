@@ -14,10 +14,10 @@ from enum import Enum
 class {{classname}}(str, Enum):
 {{#enumVars}}
     {{name}} = {{{value}}}{{^-last}}
+{{/-last}}
 
     def __str__(self):
         return self.name
-{{/-last}}
 {{/enumVars}}
 {{/allowableValues}}
 
