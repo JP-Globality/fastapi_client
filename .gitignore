@@ -15,3 +15,5 @@ tmp*/
 
 /tests/generated_client/
 /tests/logs/
+
+build/

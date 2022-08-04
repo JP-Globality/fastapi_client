@@ -33,11 +33,15 @@ USAGE
 
 main() {
   validate_inputs
-  if [ -z "$IS_HTTP" ]; then
-    generate_in_docker_file "$@"
-  else
-    generate_in_docker_http "$@"
-  fi
+  # if [ -z "$IS_HTTP" ]; then
+  #   generate_in_docker_file "$@"
+  # else
+  #   generate_in_docker_http "$@"
+  # fi
+
+  # Assume that we're running using local file
+  # TODO - integrate into rest of script
+  generate_using_node_cli "$@"
 }
 
 validate_inputs() {
@@ -81,6 +85,21 @@ generate_in_docker_file() {
     -t /local/openapi-python-templates \
     --type-mappings array=List,uuid=UUID,file=IO,object=Any \
     -i /openapi.json \
+    "$@"
+}
+
+generate_using_node_cli() {
+  # INPUT_FILE="$(cd "$(dirname "$INPUT")" && pwd )"/"$(basename "$INPUT")"
+
+  openapi-generator-cli generate \
+    -g python \
+    -o $WORK_DIR \
+    --package-name="${PACKAGE_NAME}" \
+    --additional-properties=generateSourceCodeOnly="${SOURCE_CODE_ONLY}" \
+    -t ./openapi-python-templates \
+    --type-mappings array=List,uuid=UUID,file=IO,object=Any \
+    -i $INPUT \
+    --skip-validate-spec \
     "$@"
 }
 
