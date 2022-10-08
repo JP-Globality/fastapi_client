@@ -7,6 +7,15 @@ from pydantic import BaseModel, Field
 
 {{#models}}
 {{#model}}
+{{#pyImports}}
+{{import}}
+{{/pyImports}}
+{{/model}}
+{{/models}}
+
+
+{{#models}}
+{{#model}}
 
 {{#allowableValues}}
 from enum import Enum
@@ -16,9 +25,6 @@ class {{classname}}(str, Enum):
     {{name}} = {{{value}}}{{^-last}}
 {{/-last}}
 {{/enumVars}}
-    
-    def __str__(self):
-        return self.name
 {{/allowableValues}}
 
 {{^allowableValues}}
@@ -35,3 +41,5 @@ class {{classname}}(BaseModel):
 
 {{/model}}
 {{/models}}
+
+{{classname}}.update_forward_refs()
