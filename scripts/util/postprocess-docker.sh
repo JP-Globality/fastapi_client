@@ -26,7 +26,10 @@ main() {
 
   pushd $WORK_DIR
 
-  merge_generated_models
+  # Upgrading to 5.4.0 - disabling the merge_generated_models command because:
+  # the `ls "./${PACKAGE_NAME}"/models/*.py | grep -v __init__` command was getting stuck
+  # as there weren't any files for it to process?
+  # merge_generated_models
   delete_unused
   fix_any_of
   apply_formatters
@@ -66,7 +69,11 @@ fix_any_of() {
 apply_formatters() {
   autoflake --remove-all-unused-imports --recursive --remove-unused-variables --in-place "${PACKAGE_NAME}" --exclude=__init__.py
   isort --float-to-top -w 120 -m 3 --trailing-comma --force-grid-wrap 0 --combine-as -p "${PACKAGE_NAME}" "${PACKAGE_NAME}"
-  black --fast -l 120 --target-version py37 "${PACKAGE_NAME}"
+  
+  # Upgrading to 5.4.0 - disabling the `black` command because:
+  # it was failing with: 
+  # `ImportError: cannot import name 'GitWildMatchPatternError' from 'pathspec.patterns.gitwildmatch'`
+  # black --fast -l 120 --target-version py37 "${PACKAGE_NAME}"
 }
 
 while [ $# -gt 0 ]; do
