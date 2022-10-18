@@ -31,7 +31,7 @@ class {{classname}}(BaseModel):
     {{name}}: "{{^required}}Optional[{{/required}}{{>_dataTypeModel}}{{^required}}]{{/required}}" = Field({{#required}}...{{/required}}{{^required}}None{{/required}}, alias="{{baseName}}")
 {{/isEnum}}
 {{/vars}}
-...
+    ...
 {{/allowableValues}}
 
 {{/model}}
