@@ -112,7 +112,7 @@ class _{{classname}}:
         return self.api_client.request(
             type_={{>_returnType}},
             method="{{httpMethod}}",
-            url="{{{path}}}",
+            url="{{{basePathWithoutHost}}}{{{path}}}",
             {{#pathParams.0}}path_params=path_params,{{/pathParams.0}}
             {{#queryParams.0}}params=query_params,{{/queryParams.0}}
             {{#headerParams.0}}headers=headers,{{/headerParams.0}}
