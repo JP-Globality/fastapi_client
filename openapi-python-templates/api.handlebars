@@ -19,12 +19,74 @@ class _{{classname}}:
         self.api_client = api_client
 
 {{#operation}}
-    def _build_for_{{operationId}}(self, {{#allParams}}{{#required}}{{paramName}}: {{>_dataTypeApi}}{{/required}}{{^required}}{{paramName}}: {{>_dataTypeApi}} = None{{/required}}{{^last}}, {{/last}}{{/allParams}}) -> Awaitable[{{>_returnType}}]:
+    def _build_for_{{operationId}}(self, 
+    {{#allParams}}
+    
+    {{#required}}{{paramName}}: {{>_dataTypeApi}}{{/required}}{{^required}}
+    {{paramName}}: {{>_dataTypeApi}} = None{{/required}}{{^last}}, 
+    {{/last}}
+
+    {{{dataType}}}
+
+    {{#isArray}}
+            {{#items}}
+                {{#isPrimitiveType}}
+    :type {{paramName}}: List[{{>param_type}}]
+                {{/isPrimitiveType}}
+                {{^isPrimitiveType}}
+    :type {{paramName}}: list | bytes
+                {{/isPrimitiveType}}
+            {{/items}}
+        {{/isArray}}
+
+        {{#isMap}}
+            {{#items}}
+                {{#isPrimitiveType}}
+    :type {{paramName}}: Dict[str, {{>param_type}}]
+                {{/isPrimitiveType}}
+                {{^isPrimitiveType}}
+    :type {{paramName}}: dict | bytes
+                {{/isPrimitiveType}}
+            {{/items}}
+        {{/isMap}}
+    
+    {{/allParams}}
+) -> Awaitable[{{>_returnType}}]:
 {{#notes}}
         """
         {{{notes}}}
         """
 {{/notes}}
+{{#with composedSchemas}}
+{{#if oneOf}}
+
+@classmethod
+@functools.lru_cache()
+def one_of(cls):
+    # we need this here to make our import statements work
+    # we must store _composed_schemas in here so the code is only run
+    # when we invoke this method. If we kept this at the class
+    # level we would get an error because the class level
+    # code would be run when this module is imported, and these composed
+    # classes don't exist yet because their module has not finished
+    # loading
+    return [
+{{#each oneOf}}
+{{#if complexType}}
+        {{complexType}},
+{{else}}
+    {{#if nameInSnakeCase}}
+        cls.{{name}},
+    {{else}}
+        cls.{{baseName}},
+    {{/if}}
+{{/if}}
+{{/each}}
+    ]
+{{/if}}
+{{/with}}
+
+
 {{#pathParams.0}}
         path_params = {
 {{#pathParams}}
